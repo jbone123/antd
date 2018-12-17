@@ -91,6 +91,36 @@ const getStyleLoaders = (cssOptions, preProcessor) => {
         sourceMap: shouldUseSourceMap,
       },
     },
+    {
+      //less配置 jbone
+      loader: require.resolve('less-loader'),
+      loader: require.resolve('css-loader'),
+      //
+      options: {
+        // Necessary for external CSS imports to work
+        // https://github.com/facebook/create-react-app/issues/2677
+        ident: 'postcss',
+        plugins: () => [
+          require('postcss-flexbugs-fixes'),
+          require('postcss-preset-env')({
+            autoprefixer: {
+              flexbox: 'no-2009',
+            },
+            stage: 3,
+          }),
+        ],
+      },
+    },
+     //
+     {
+      loader: require.resolve('less-loader'),
+      options: {
+        modifyVars:{"@primary-color":"#1DA57A"},
+        // 是否激活js
+        javascriptEnabled: true
+      }
+    }
+    //
   ];
   if (preProcessor) {
     loaders.push({
@@ -252,21 +282,22 @@ module.exports = {
 
       // First, run the linter.
       // It's important to do this before Babel processes the JS.
-      {
-        test: /\.(js|mjs|jsx)$/,
-        enforce: 'pre',
-        use: [
-          {
-            options: {
-              formatter: require.resolve('react-dev-utils/eslintFormatter'),
-              eslintPath: require.resolve('eslint'),
+      // 关闭eslint jbone
+      // {
+      //   test: /\.(js|mjs|jsx)$/,
+      //   enforce: 'pre',
+      //   use: [
+      //     {
+      //       options: {
+      //         formatter: require.resolve('react-dev-utils/eslintFormatter'),
+      //         eslintPath: require.resolve('eslint'),
               
-            },
-            loader: require.resolve('eslint-loader'),
-          },
-        ],
-        include: paths.appSrc,
-      },
+      //       },
+      //       loader: require.resolve('eslint-loader'),
+      //     },
+      //   ],
+      //   include: paths.appSrc,
+      // },
       {
         // "oneOf" will traverse all following loaders until one will
         // match the requirements. When no loader matches it will fall
@@ -290,6 +321,10 @@ module.exports = {
 
             loader: require.resolve('babel-loader'),
             options: {
+              // antd 懒加载配置  jbone
+              plugins: [
+                ['import', [{ libraryName: "antd", style: true}]]
+              ],
               customize: require.resolve(
                 'babel-preset-react-app/webpack-overrides'
               ),
